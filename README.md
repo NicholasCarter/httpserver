@@ -1,8 +1,46 @@
 ##CIS 457 Project 1: Mini HTTP Server
 
 + [Project Requirements](http://www.cis.gvsu.edu/~kalafuta/cis457/w15/labs/457prj1.html)
++ [Sample HTTP Exchange](#sample-http-exchange)
 + [How to Contribute](#how-to-contribute)
 + [Tips](#tips)
+
+Sample HTTP Exchange
+-----------------------
+
+To retrieve the file at the URL
+
+```
+http://www.somehost.com/path/file.html
+```
+
+first open a socket to the host www.somehost.com, port 80 (use the default port of 80 because none is specified in the URL). Then, send something like the following through the socket:
+
+```
+GET /path/file.html HTTP/1.0
+From: someuser@jmarshall.com
+User-Agent: HTTPTool/1.0
+[blank line here]
+```
+
+The server should respond with something like the following, sent back through the same socket:
+
+```
+HTTP/1.0 200 OK
+Date: Fri, 31 Dec 1999 23:59:59 GMT
+Content-Type: text/html
+Content-Length: 1354
+
+<html>
+<body>
+<h1>Happy New Millennium!</h1>
+(more file contents)
+  .
+  .
+  .
+</body>
+</html>
+```
 
 How to Contribute
 -------------------
