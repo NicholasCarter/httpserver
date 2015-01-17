@@ -42,6 +42,8 @@ Content-Length: 1354
 </html>
 ```
 
+Taken from: http://www.jmarshall.com/easy/http/#whatis
+
 How to Contribute
 -------------------
 1. Fork the main repository to your github account using the link in the upper right.
