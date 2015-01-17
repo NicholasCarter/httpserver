@@ -11,29 +11,28 @@ Sample HTTP Exchange
 To retrieve the file at the URL
 
 ```
-http://www.somehost.com/path/file.html
+http://localhost/index.html:9876
 ```
 
-first open a socket to the host www.somehost.com, port 80 (use the default port of 80 because none is specified in the URL). Then, send something like the following through the socket:
+first open a socket to localhost port 9876. Then, send something like the following through the socket:
 
 ```
-GET /path/file.html HTTP/1.0
-From: someuser@jmarshall.com
-User-Agent: HTTPTool/1.0
-[blank line here]
+GET /index.html HTTP/1.1\r\n
+\r\n
 ```
 
 The server should respond with something like the following, sent back through the same socket:
 
 ```
-HTTP/1.0 200 OK
-Date: Fri, 31 Dec 1999 23:59:59 GMT
-Content-Type: text/html
-Content-Length: 1354
-
+HTTP/1.0 200 OK\r\n
+Date: Fri, 31 Dec 2009 23:59:59 GMT\r\n
+Last-Modified: Sat, 28 Nov 2009 03:50:37 GMT\r\n
+Content-Type: text/html\r\n
+Content-Length: 1354\r\n
+\r\n
 <html>
 <body>
-<h1>Happy New Millennium!</h1>
+<h1>Hello World!</h1>
 (more file contents)
   .
   .
@@ -41,8 +40,6 @@ Content-Length: 1354
 </body>
 </html>
 ```
-
-Taken from: http://www.jmarshall.com/easy/http/#whatis
 
 How to Contribute
 -------------------
