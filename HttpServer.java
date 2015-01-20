@@ -1,48 +1,30 @@
-import java.io.*;
+import java.io.File;
 import java.net.*;
 
-class HttpServer
-{
-    public static void main(String argv[]) 
-	{
-		try
-		{
+class HttpServer {
+	public static void main(String argv[]) {
+		try {
+			@SuppressWarnings("resource")
+			// HttpDocroot docroot = new HttpDocroot(new File("docroot"));
 			ServerSocket listenSocket = new ServerSocket(9876);
 			HttpSocket socket = null;
-			while(true)
-			{
-				try
-				{
-					socket = new HttpSocket( listenSocket.accept() );
-					System.out.println("connection accepted");
-					
-					HttpRequest r = socket.recvRequest();
-					System.out.println("opcode: " + r.opcode);
-					System.out.println("path: " + r.path);
-					System.out.println("version: " + r.version);
-					System.out.println("host: " + r.headers.get("Host"));
-					
-					
-					
-					
-					
-					
+			int i = 0;
+			while (true) {
+				try {
+					socket = new HttpSocket(listenSocket.accept());
+					Runnable connectionHandler = new ConnectionHandler(socket,
+							i++);
+					Thread t = new Thread(connectionHandler);
+					t.start();
 				}
-				catch(SocketTimeoutException ste)
-				{
-					socket.close();
-					System.out.println("connectionclosed -- timeout");
-					System.out.println();
-				}
-				catch( Exception e )
-				{
-					System.out.println( e.getMessage() );
+
+				catch (Exception e) {
+					System.out.println(e.getMessage());
 				}
 			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-		catch ( Exception e )
-		{
-			System.out.println( e.getMessage() );
-		}
-	}	
+
+	}
 }
