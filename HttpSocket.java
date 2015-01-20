@@ -6,7 +6,7 @@ class HttpSocket{
 		private BufferedInputStream dataIn;
 		private BufferedReader textIn;
 		private DataOutputStream out;
-		private int timeout = 2000;
+		private int timeout = 20000;
 		
 		public HttpSocket(String address, int port) throws Exception
 		{
