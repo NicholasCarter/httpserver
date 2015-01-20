@@ -26,6 +26,19 @@ class HttpSocket{
 			out.writeBytes( s + "\n" );
 		}
 		
+		
+		public HttpRequest recvRequest() throws IOException
+		{
+			String s = "";
+			while(! s.endsWith("\r\n\r\n")){
+				s+=recvChar();
+			}
+			System.out.print(s);
+			
+			return new HttpRequest(s);
+		}
+		
+		
 		public void send(int i) throws IOException
 		{
 			out.writeByte(i);

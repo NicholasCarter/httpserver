@@ -16,7 +16,11 @@ class HttpServer
 					socket = new HttpSocket( listenSocket.accept() );
 					System.out.println("connection accepted");
 					
-					
+					HttpRequest r = socket.recvRequest();
+					System.out.println("opcode: " + r.opcode);
+					System.out.println("path: " + r.path);
+					System.out.println("version: " + r.version);
+					System.out.println("host: " + r.headers.get("Host"));
 					
 					
 					
