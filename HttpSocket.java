@@ -6,14 +6,16 @@ class HttpSocket{
 		private BufferedInputStream dataIn;
 		private BufferedReader textIn;
 		private DataOutputStream out;
+		private int timeout = 2000;
 		
-		public JHSocket(String address, int port) throws Exception
+		public HttpSocket(String address, int port) throws Exception
 		{
 			this( new Socket( address, port ) );
 		}
-		public JHSocket(Socket s) throws Exception
+		public HttpSocket(Socket s) throws Exception
 		{
 			socket = s;
+			socket.setSoTimeout(timeout);
 			dataIn = new BufferedInputStream(socket.getInputStream());
 			textIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			out= new DataOutputStream(socket.getOutputStream());
@@ -46,7 +48,7 @@ class HttpSocket{
 		
 		public char recvChar() throws IOException
 		{
-			return textIn.read();
+			return(char) textIn.read();
 		}
 		
 		public  int recvBytes(byte[] b) throws IOException

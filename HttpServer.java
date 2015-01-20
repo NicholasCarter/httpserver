@@ -8,18 +8,26 @@ class HttpServer
 		try
 		{
 			ServerSocket listenSocket = new ServerSocket(9876);
-			
+			HttpSocket socket = null;
 			while(true)
 			{
 				try
 				{
-					HttpSocket socket = new HttpSocket( listenSocket.accept() );
+					socket = new HttpSocket( listenSocket.accept() );
 					System.out.println("connection accepted");
 					
 					
 					
+					
+					
+					
+					
+					
+				}
+				catch(SocketTimeoutException ste)
+				{
 					socket.close();
-					System.out.println("connectionclosed");
+					System.out.println("connectionclosed -- timeout");
 					System.out.println();
 				}
 				catch( Exception e )
