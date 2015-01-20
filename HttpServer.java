@@ -15,13 +15,12 @@ class HttpServer
 				{
 					HttpSocket socket = new HttpSocket( listenSocket.accept() );
 					System.out.println("connection accepted");
-					StringBuilder sb = new StringBuilder();
 					
 					
 					
-						socket.close();
-						System.out.println("connectionclosed");
-						System.out.println();
+					socket.close();
+					System.out.println("connectionclosed");
+					System.out.println();
 				}
 				catch( Exception e )
 				{
