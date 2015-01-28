@@ -1,30 +1,49 @@
-import java.io.File;
+/******************************************************************************
+ * HttpServer.java
+ * 
+ * Author: Josh Hoiland
+ * 
+ * 
+ *****************************************************************************/
 import java.net.*;
 
 class HttpServer {
-	public static void main(String argv[]) {
-		try {
-			@SuppressWarnings("resource")
-			// HttpDocroot docroot = new HttpDocroot(new File("docroot"));
-			ServerSocket listenSocket = new ServerSocket(9876);
-			HttpSocket socket = null;
-			int i = 0;
-			while (true) {
-				try {
-					socket = new HttpSocket(listenSocket.accept());
-					Runnable connectionHandler = new ConnectionHandler(socket,
-							i++);
-					Thread t = new Thread(connectionHandler);
+	private static HttpDocroot docroot;
+
+	public HttpServer()
+	{
+		try
+		{
+			ServerSocket listenSocket = new ServerSocket( 9876 );
+
+			while ( true )
+			{
+				try
+				{
+					Socket socket = listenSocket.accept();
+					Runnable connectionHandler = new RequestHandler( socket );
+					Thread t = new Thread( connectionHandler );
 					t.start();
 				}
 
-				catch (Exception e) {
-					System.out.println(e.getMessage());
+				catch ( Exception e )
+				{
+					System.out.println( e.getMessage() );
 				}
 			}
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
+		} catch ( Exception e )
+		{
+			System.out.println( e.getMessage() );
 		}
+	}
 
+	public static synchronized HttpDocroot getDocroot()
+	{
+		return docroot;
+	}
+
+	public static void main( String argv[] )
+	{
+		new HttpServer();
 	}
 }
