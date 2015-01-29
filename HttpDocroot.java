@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 class HttpDocroot {
 	
@@ -20,7 +23,7 @@ class HttpDocroot {
 			try {
 				path = root.getCanonicalPath() + File.separator;
 			} catch (IOException e) {
-				System.err.print("Directory Path Error");
+				throw new SecurityException("Directory Path Error");
 			}
 		}
 
@@ -34,7 +37,7 @@ class HttpDocroot {
 		try {
 			dir = f.getCanonicalPath();
 		} catch (IOException e) {
-			System.err.print("File Path Error");
+			throw new SecurityException("File Path Error");
 		}
 		Path locale = Paths.get(dir);
 		
@@ -43,11 +46,25 @@ class HttpDocroot {
 			try {
 				data = Files.readAllBytes(locale);
 			} catch (IOException e) {
-				System.err.print("File Unreadable");
+				throw new SecurityException("File Unreadable");
 			}
 		}
 		
 		//Returns the byte array of the file if it is appropriate, returns null otherwise.
 		return data;
 	}
+	
+	public String modTime(File f){
+		
+		long time = f.lastModified();
+		
+		Date date = new Date(time);
+		//day of the week(3 letter), day of the month, month, year, hour:minutes:seconds GMT
+		DateFormat format = new SimpleDateFormat("E:d:MMM:yyyy:HH:mm:ss:zzz");
+		String modifiedTime = format.format(date);
+		
+		return modifiedTime;
+	}
+		
+	
 }
