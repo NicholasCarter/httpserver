@@ -9,6 +9,7 @@ import java.net.*;
 
 class HttpServer {
 	private static HttpDocroot docroot;
+	private static HttpLog log;
 
 	public HttpServer()
 	{
@@ -16,7 +17,7 @@ class HttpServer {
 		{
 			ServerSocket listenSocket = new ServerSocket( 9876 );
 
-			System.out.println("HTTP server running...");
+			System.out.println( "HTTP server running..." );
 			while ( true )
 			{
 				try
@@ -25,7 +26,7 @@ class HttpServer {
 					Runnable connectionHandler = new RequestHandler( socket );
 					Thread t = new Thread( connectionHandler );
 					t.start();
-					
+
 				}
 
 				catch ( Exception e )
@@ -42,6 +43,11 @@ class HttpServer {
 	public static synchronized HttpDocroot getDocroot()
 	{
 		return docroot;
+	}
+
+	public static synchronized HttpLog getLog()
+	{
+		return log;
 	}
 
 	public static void main( String argv[] )
