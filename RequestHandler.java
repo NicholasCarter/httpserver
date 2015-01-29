@@ -39,44 +39,66 @@ class RequestHandler implements Runnable {
 	{
 		try
 		{
+			System.out.println( socket.getPort() + ": "
+					+ "Connection Established." );
+			String tmp = "";
+
+			System.out.println( socket.getPort() + ": "
+					+ "waiting for request." );
+			while ( ( tmp = in.readLine() ) != null )
+			{
+				System.out.println( socket.getPort() + ": "
+						+ "Request Received." );
+				Request request = new Request();
+				request.setRequestLine( tmp );
+				try
+				{
+					tmp = in.readLine();
+					while ( tmp != null && !tmp.equals( "" ) )
+					{
+						System.out.println( socket.getPort() + ": "
+								+ "Header Received." );
+						request.getHeaders().put( tmp.split( ": " )[0],
+								tmp.split( ": " )[1] );
+						tmp = in.readLine();
+					}
+				} catch ( Exception e )
+				{
+					e.printStackTrace();
+				}
+				if ( request.getHeaders().containsKey( "Content-Length" ) )
+				{
+					System.out.println( socket.getPort() + ": "
+							+ "Body Received--unsupported." );
+					socket.getInputStream().skip(
+							Long.parseLong( request.getHeaders().get(
+									"Content-Length" ) ) );
+				}
+				System.out.println( socket.getPort() + ": "
+						+ request.toString() );
+				out.println( request.getResponse() );
+				System.out.println( socket.getPort() + ": " + "Response Sent" );
+			}
+			System.out.println( socket.getPort() + ": "
+					+ "Connection Closed by client" );
+			socket.close();
+		} catch ( SocketTimeoutException e )
+		{
+			System.out.print( socket.getPort() + ": " + "Connection Timedout." );
 			try
 			{
-				// continually get requests while connection is open
-				while ( true )
-				{
-					// read from in until blank line
-					ArrayList< String > lines = new ArrayList< String >();
-
-					String tmp = "";
-					do
-					{
-						tmp = in.readLine();
-						lines.add( tmp );
-					} while ( tmp.equals( "" ) );
-
-					// instantiate request
-					Request request = new Request( lines );
-					// if there is a message body read content length bytes and
-					// skip them because we are only supporting GET requests and
-					// don't care
-					if ( request.getHeaders().containsKey( "content-length" ) )
-					{
-						long count = Long.parseLong( request.getHeaders().get(
-								"content-length" ) );
-						socket.getInputStream().skip( count );
-					}
-					out.print( request.getResponse() );
-
-				}
-			} catch ( SocketTimeoutException ste )
-			{
 				socket.close();
-				System.out.println( "connectionclosed -- timeout " );
-				System.out.println();
+			} catch ( IOException e1 )
+			{
+				System.out.print( socket.getPort() + ": " );
+				e1.printStackTrace();
 			}
-		} catch ( Exception e )
+		} catch ( NumberFormatException e )
 		{
-			System.out.println( e.getMessage() );
+			e.printStackTrace();
+		} catch ( IOException e )
+		{
+			e.printStackTrace();
 		}
 	}
 }

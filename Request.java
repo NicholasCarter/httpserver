@@ -1,28 +1,27 @@
 import java.util.*;
 
 class Request {
-	private String opcode;
-	private String path;
-	private String version;
+	private String requestLine;
 	private HashMap< String, String > headers;
 
-	public Request( ArrayList< String > request )
+	public Request()
 	{
+		headers = new HashMap< String, String >();
 	}
 
 	public String getOpcode()
 	{
-		return opcode;
+		return requestLine.split( " " )[0];
 	}
 
 	public String getPath()
 	{
-		return path;
+		return requestLine.split( " " )[1];
 	}
 
 	public String getVersion()
 	{
-		return version;
+		return requestLine.split( " " )[2];
 	}
 
 	public HashMap< String, String > getHeaders()
@@ -32,7 +31,23 @@ class Request {
 
 	public String getResponse()
 	{
-		return null;
+		return "HTTP/1.1 202 OKr\nContent-type: text/html\r\nContent-length: 58\r\n\r\n<html><head><title>OK</title></head><body>OK.</body><html>";
+	}
+
+	public String getRequestLine()
+	{
+		return requestLine;
+	}
+
+	public void setRequestLine( String requestLine )
+	{
+		this.requestLine = requestLine;
+	}
+
+	public String toString()
+	{
+		String s = requestLine + " " + headers.toString();
+		return s;
 	}
 
 }

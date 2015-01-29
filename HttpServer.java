@@ -16,6 +16,7 @@ class HttpServer {
 		{
 			ServerSocket listenSocket = new ServerSocket( 9876 );
 
+			System.out.println("HTTP server running...");
 			while ( true )
 			{
 				try
@@ -24,16 +25,17 @@ class HttpServer {
 					Runnable connectionHandler = new RequestHandler( socket );
 					Thread t = new Thread( connectionHandler );
 					t.start();
+					
 				}
 
 				catch ( Exception e )
 				{
-					System.out.println( e.getMessage() );
+					e.printStackTrace();
 				}
 			}
 		} catch ( Exception e )
 		{
-			System.out.println( e.getMessage() );
+			e.printStackTrace();
 		}
 	}
 
