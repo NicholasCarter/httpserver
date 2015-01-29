@@ -39,16 +39,10 @@ class RequestHandler implements Runnable {
 	{
 		try
 		{
-			System.out.println( socket.getPort() + ": "
-					+ "Connection Established." );
 			String tmp = "";
 
-			System.out.println( socket.getPort() + ": "
-					+ "waiting for request." );
 			while ( ( tmp = in.readLine() ) != null )
 			{
-				System.out.println( socket.getPort() + ": "
-						+ "Request Received." );
 				Request request = new Request();
 				request.setRequestLine( tmp );
 				try
@@ -56,8 +50,6 @@ class RequestHandler implements Runnable {
 					tmp = in.readLine();
 					while ( tmp != null && !tmp.equals( "" ) )
 					{
-						System.out.println( socket.getPort() + ": "
-								+ "Header Received." );
 						request.getHeaders().put( tmp.split( ": " )[0],
 								tmp.split( ": " )[1] );
 						tmp = in.readLine();
@@ -68,29 +60,23 @@ class RequestHandler implements Runnable {
 				}
 				if ( request.getHeaders().containsKey( "Content-Length" ) )
 				{
-					System.out.println( socket.getPort() + ": "
-							+ "Body Received--unsupported." );
 					socket.getInputStream().skip(
 							Long.parseLong( request.getHeaders().get(
 									"Content-Length" ) ) );
 				}
-				System.out.println( socket.getPort() + ": "
-						+ request.toString() );
-				out.println( request.getResponse() );
-				System.out.println( socket.getPort() + ": " + "Response Sent" );
+				HttpServer.getLog().write( request.toString(), getInfo() );
+				String response = request.getResponse();
+				HttpServer.getLog().write( response, getInfo() );
+				out.println( response );
 			}
-			System.out.println( socket.getPort() + ": "
-					+ "Connection Closed by client" );
 			socket.close();
 		} catch ( SocketTimeoutException e )
 		{
-			System.out.print( socket.getPort() + ": " + "Connection Timedout." );
 			try
 			{
 				socket.close();
 			} catch ( IOException e1 )
 			{
-				System.out.print( socket.getPort() + ": " );
 				e1.printStackTrace();
 			}
 		} catch ( NumberFormatException e )
