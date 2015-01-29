@@ -16,7 +16,7 @@ class HttpServer {
 		try
 		{
 			ServerSocket listenSocket = new ServerSocket( 9876 );
-
+			log = new HttpLog();
 			System.out.println( "HTTP server running..." );
 			while ( true )
 			{
