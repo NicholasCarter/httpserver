@@ -139,4 +139,3 @@ How to Contribute
 ## Tips
 + Do step 10 periodically to make sure your forked repository and working directory are up to date with the main repository
 + When making small changes that you know you're going to keep, it's pretty unnecessary to work on a different branch
-
