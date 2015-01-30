@@ -6,6 +6,10 @@
  * 
  *****************************************************************************/
 import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 class HttpServer {
 	private static HttpDocroot docroot;
@@ -18,6 +22,8 @@ class HttpServer {
 			ServerSocket listenSocket = new ServerSocket( 9876 );
 			log = new HttpLog();
 			System.out.println( "HTTP server running..." );
+			System.out.println( currentTime() );
+
 			while ( true )
 			{
 				try
@@ -48,6 +54,13 @@ class HttpServer {
 	public static synchronized HttpLog getLog()
 	{
 		return log;
+	}
+
+	public static synchronized String currentTime()
+	{
+		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
+		DateFormat format = new SimpleDateFormat( "E, d MMM yyyy HH:mm:ss z" );
+		return format.format( new Date() );
 	}
 
 	public static void main( String argv[] )
