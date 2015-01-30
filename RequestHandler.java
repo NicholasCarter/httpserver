@@ -64,9 +64,7 @@ class RequestHandler implements Runnable {
 							Long.parseLong( request.getHeaders().get(
 									"Content-Length" ) ) );
 				}
-				HttpServer.getLog().write( request.toString(), getInfo() );
 				String response = request.getResponse();
-				HttpServer.getLog().write( response, getInfo() );
 				out.println( response );
 			}
 			socket.close();
