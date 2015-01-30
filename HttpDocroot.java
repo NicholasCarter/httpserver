@@ -76,7 +76,7 @@ class HttpDocroot {
 		Date date = new Date( time );
 		// day of the week(3 letter), day of the month, month, year,
 		// hour:minutes:seconds GMT
-		DateFormat format = new SimpleDateFormat( "E, d MMM yyyy HH:mm:ss z" );
+		DateFormat format = new SimpleDateFormat( "E, dd MMM yyyy HH:mm:ss z" );
 		String modifiedTime = format.format( date );
 
 		return modifiedTime;
