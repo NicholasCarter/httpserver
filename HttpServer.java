@@ -59,7 +59,7 @@ class HttpServer {
 	public static synchronized String currentTime()
 	{
 		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
-		DateFormat format = new SimpleDateFormat( "E, d MMM yyyy HH:mm:ss z" );
+		DateFormat format = new SimpleDateFormat( "E, dd MMM yyyy HH:mm:ss z" );
 		return format.format( new Date() );
 	}
 
