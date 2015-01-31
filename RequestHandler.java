@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -8,7 +9,7 @@ import java.util.ArrayList;
 class RequestHandler implements Runnable {
 	private int timeout = 20000;
 	private Socket socket;
-	private PrintWriter out;
+	private DataOutputStream out;
 	private BufferedReader in;
 
 	public RequestHandler( Socket socket )
@@ -20,7 +21,7 @@ class RequestHandler implements Runnable {
 		{
 			this.socket.setSoTimeout( timeout );
 			// initialize I/O
-			out = new PrintWriter( socket.getOutputStream(), true );
+			out = new DataOutputStream( socket.getOutputStream() );
 			in = new BufferedReader( new InputStreamReader(
 					socket.getInputStream() ) );
 
@@ -64,8 +65,8 @@ class RequestHandler implements Runnable {
 							Long.parseLong( request.getHeaders().get(
 									"Content-Length" ) ) );
 				}
-				String response = request.getResponse();
-				out.println( response );
+				System.out.println( request.toString() );
+				out.write( request.getResponse() );
 			}
 			socket.close();
 		} catch ( SocketTimeoutException e )

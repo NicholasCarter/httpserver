@@ -5,6 +5,7 @@
  * 
  * 
  *****************************************************************************/
+import java.io.File;
 import java.net.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,6 +22,7 @@ class HttpServer {
 		{
 			ServerSocket listenSocket = new ServerSocket( 9876 );
 			log = new HttpLog();
+			docroot = new HttpDocroot( new File( "root" ) );
 			System.out.println( "HTTP server running..." );
 			System.out.println( currentTime() );
 
