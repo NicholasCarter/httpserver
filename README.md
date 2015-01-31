@@ -125,7 +125,7 @@ How to Contribute
       ```
       $ git push  --all origin -u
       ```
-		- The -u option makes it so that the next times you push, you only need to run `$ git push`
+		- The -u option makes it so that the next times you push, you only need to run `$ git push --all`
 	  
 	3. Now in github, create a pull request on the branch you just pushed. 
 
