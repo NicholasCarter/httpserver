@@ -65,7 +65,7 @@ class RequestHandler implements Runnable {
 							Long.parseLong( request.getHeaders().get(
 									"Content-Length" ) ) );
 				}
-				System.out.println( request.toString() );
+				HttpServer.getLog().println( "***REQUEST*****\n" + request );
 				out.write( request.getResponse() );
 			}
 			socket.close();
@@ -83,7 +83,6 @@ class RequestHandler implements Runnable {
 			e.printStackTrace();
 		} catch ( IOException e )
 		{
-			e.printStackTrace();
 		}
 	}
 }

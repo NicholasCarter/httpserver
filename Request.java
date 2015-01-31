@@ -7,6 +7,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Map.Entry;
 
 class Request {
 	private String requestLine;
@@ -47,58 +48,70 @@ class Request {
 		String responseLine = "";
 
 		headerLines += "Date: " + HttpServer.currentTime() + "\r\n";
-
-		if ( ( body = HttpServer.getDocroot().getFile( getPath() ) ) != null )
+		if ( getOpcode().equals( "GET" ) )
 		{
-			try
+			if ( ( body = HttpServer.getDocroot().getFile( getPath() ) ) != null )
 			{
-				// if the if mod since time is before the mod time 200 else 304
-				if ( headers.containsKey( "If-Modified-Since" )
-						&& format
-								.parse( ( headers.get( "If-Modified-Since" ) ) )
-								.compareTo(
-										format.parse( HttpServer.getDocroot()
-												.modTime( getPath() ) ) ) >= 0 )
+				try
 				{
-					responseLine = "HTTP/1.1 304 Not Modified\r\n";
-					body = null;
-				}
-				else
-				{
+					// if the if mod since time is before the mod time 200 else
+					// 304
+					if ( headers.containsKey( "If-Modified-Since" )
+							&& format.parse(
+									( headers.get( "If-Modified-Since" ) ) )
+									.compareTo(
+											format.parse( HttpServer
+													.getDocroot().modTime(
+															getPath() ) ) ) >= 0 )
+					{
+						responseLine = "HTTP/1.1 304 Not Modified\r\n";
+						body = null;
+					}
+					else
+					{
 
-					responseLine = "HTTP/1.1 200 OK\r\n";
-					headerLines += "Last-Modified: "
-							+ HttpServer.getDocroot().modTime( getPath() )
-							+ "\r\n";
-					headerLines += "Content-Type: "
-							+ HttpServer.getDocroot().ContentType( getPath() )
-							+ "\r\n";
-					headerLines += "Content-Length: " + body.length + "\r\n";
+						responseLine = "HTTP/1.1 200 OK\r\n";
+						headerLines += "Last-Modified: "
+								+ HttpServer.getDocroot().modTime( getPath() )
+								+ "\r\n";
+						headerLines += "Content-Type: "
+								+ HttpServer.getDocroot().ContentType(
+										getPath() ) + "\r\n";
+						headerLines += "Content-Length: " + body.length
+								+ "\r\n";
+					}
+				} catch ( ParseException e )
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			} catch ( ParseException e )
+			}
+			else
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				responseLine = "HTTP/1.1 404 Not Found\r\n";
+				try
+				{
+					body = Files.readAllBytes( Paths.get( "404.html" ) );
+					headerLines += "Content-Type: text/html\r\n";
+					headerLines += "Content-Length: " + body.length + "\r\n";
+				} catch ( IOException e )
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		else
 		{
-			responseLine = "HTTP/1.1 404 Not Found\r\n";
-			try
-			{
-				body = Files.readAllBytes( Paths.get( "404.html" ) );
-				headerLines += "Content-Type: text/html\r\n";
-				headerLines += "Content-Length: " + body.length + "\r\n";
-			} catch ( IOException e )
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			responseLine = "HTTP/1.1 501 Not Implemented\r\n";
 		}
 
 		headerLines += "\r\n";
 		rLBytes = responseLine.getBytes();
 		hBytes = headerLines.getBytes();
+
+		HttpServer.getLog().println( "******RESPONSE******\n"
+				+ responseLine + headerLines );
 
 		byte[] out = null;
 		if ( body != null )
@@ -115,7 +128,6 @@ class Request {
 			System.arraycopy( rLBytes, 0, out, 0, rLBytes.length );
 			System.arraycopy( hBytes, 0, out, rLBytes.length, hBytes.length );
 		}
-		System.out.println( new String( out ) );
 		return out;
 	}
 
@@ -131,7 +143,11 @@ class Request {
 
 	public String toString()
 	{
-		String s = requestLine + " " + headers.toString();
+		String s = requestLine + "\n";
+		for ( Entry< String, String > entry : headers.entrySet() )
+		{
+			s += entry.getKey() + ": " + entry.getValue() + "\n";
+		}
 		return s;
 	}
 

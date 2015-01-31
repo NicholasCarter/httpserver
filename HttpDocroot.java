@@ -60,15 +60,23 @@ class HttpDocroot {
 	{
 		int i = f.lastIndexOf( "." );
 		String ext = f.substring( i + 1 );
-		if ( ext.equals( "jpg" ) )
+		if ( ext.equals( "jpg" ) || ext.equals( "gif" ) || ext.equals( "png" ) )
 		{
 			return "image/" + ext;
 		}
-		else if ( ext.equals( "html" ) )
+		else if ( ext.equals( "html" ) || ext.equals( "css" ) )
 		{
 			return "text/" + ext;
 		}
+		else if ( ext.equals( "mp3" ) )
+		{
+			return "audio/" + "mpeg";
+		}
+		else if ( ext.equals( "pdf" ) )
+		{
+			return "application/pdf";
+		}
 		else
-			return "";
+			return "text/plain";
 	}
 }
