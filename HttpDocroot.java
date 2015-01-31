@@ -21,57 +21,31 @@ class HttpDocroot {
 		{
 			throw new IllegalArgumentException( "Docroot must be a Directory!" );
 		}
-		else
-		{
-			root = docroot;
-			try
-			{
-				path = root.getCanonicalPath() + File.separator;
-			} catch ( IOException e )
-			{
-				throw new SecurityException( "Directory Path Error" );
-			}
-		}
-
+		root = docroot;
+		path = root.getAbsolutePath();
 	}
 
-	public byte[] getFile( File f )
+	public byte[] getFile( String f )
 	{
 		byte[] data = null;
-		String dir = null;
-
-		// Specify location of file
-		try
-		{
-			dir = f.getCanonicalPath();
-		} catch ( IOException e )
-		{
-			throw new SecurityException( "File Path Error" );
-		}
-		Path locale = Paths.get( dir );
-
-		// If path is within DocRoot, or any subdirectory of DocRoot, read in
-		// its bytes
-		if ( dir.startsWith( path ) )
+		File file = new File( path + f );
+		if ( file.exists() )
 		{
 			try
 			{
-				data = Files.readAllBytes( locale );
+				data = Files.readAllBytes( Paths.get( file.getAbsolutePath() ) );
 			} catch ( IOException e )
 			{
-				throw new SecurityException( "File Unreadable" );
+				e.printStackTrace();
 			}
 		}
-
-		// Returns the byte array of the file if it is appropriate, returns null
-		// otherwise.
 		return data;
 	}
 
-	public String modTime( File f )
+	public String modTime( String f )
 	{
-
-		long time = f.lastModified();
+		File file = new File( path + f );
+		long time = file.lastModified();
 		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
 		Date date = new Date( time );
 		// day of the week(3 letter), day of the month, month, year,
@@ -82,4 +56,27 @@ class HttpDocroot {
 		return modifiedTime;
 	}
 
+	public String ContentType( String f )
+	{
+		int i = f.lastIndexOf( "." );
+		String ext = f.substring( i + 1 );
+		if ( ext.equals( "jpg" ) || ext.equals( "gif" ) || ext.equals( "png" ) )
+		{
+			return "image/" + ext;
+		}
+		else if ( ext.equals( "html" ) || ext.equals( "css" ) )
+		{
+			return "text/" + ext;
+		}
+		else if ( ext.equals( "mp3" ) )
+		{
+			return "audio/" + "mpeg";
+		}
+		else if ( ext.equals( "pdf" ) )
+		{
+			return "application/pdf";
+		}
+		else
+			return "text/plain";
+	}
 }

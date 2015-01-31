@@ -1,12 +1,15 @@
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class HttpLog {
-	public PrintWriter out;
+	public Writer out;
 
 	public HttpLog()
 	{
@@ -17,19 +20,25 @@ public class HttpLog {
 	{
 		try
 		{
-			out = new PrintWriter( new FileOutputStream( filename, true ) );
-		} catch ( FileNotFoundException e )
+			out = new FileWriter( filename );
+
+		} catch ( IOException e )
 		{
 			throw new FileNotFoundException( e.getMessage() );
 		}
 	}
 
-	public void write( String msg, String socketInfo )
+	public void println( String s )
 	{
-		Date date = new Date();
-		DateFormat format = new SimpleDateFormat( "EEE, d MMM yyyy HH:mm:ss Z" );
-		String timestamp = format.format( date );
-		out.println( timestamp + "::" + socketInfo + "::" + msg );
+		try
+		{
+			out.write( s + "\n" );
+			out.flush();
+		} catch ( IOException e )
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 }
