@@ -78,7 +78,8 @@ How to Contribute
 		
 		- `upstream` should be the URL to the main repository and `origin` should be the URL to your forked repository.
 		
-7. You're now ready to make changes. It's good practice to switch to a new [branch](http://nvie.com/posts/a-successful-git-branching-model/) when you start working on a new feature.
+7. You're now ready to make changes. It's good practice to use a new [branch](http://nvie.com/posts/a-successful-git-branching-model/) for each new feature you're working on, or at least work on a branch separate from `master`. `master` should reflect the state of `upstream`.
+
     - To get a list of branches: (The current branch will be marked with an asterisk)
 
         ```
@@ -110,32 +111,32 @@ How to Contribute
       ```
      $ git add --all
       ```
-9. When you've completed and tested a feature and want to keep it, switch to your master branch, then merge your feature branch into `master` (make sure all changes have been committed). Finally, delete the feature branch. If you don't want to keep the changes, just delete the feature branch: 
+	  
+9. When you've completed and tested a feature, you're ready to push it upstream. 
 
-    ```
-    $ git checkout master
-    $ git merge <branch name>
-    $ git branch -d <branch name>
-    ```
-10. You may now want to contribute your changes to the main repository. 
-    1. Fetch any changes that may have been applied to the main repository. Merge the main repository's master branch into your local master branch (make sure you are currently on your master branch) then resolve any conflicts (it will tell you if there are conflicts):
+	1. Fetch any changes that may have been applied `upstream`. Merge `upstream`'s master branch into your local development branch, then resolve any conflicts (it will tell you if there are conflicts):
         
       ```
       $ git fetch upstream
       $ git merge upstream/master
       ```
-    2. After a successful merge, push up to your forked repository on github:
+    2. After a successful merge, push your local work up to your forked repository on github:
     
       ```
-      $ git push origin master
+      $ git push  --all origin -u
       ```
-      Or, if you have multiple branches and you want to push all of them at once:
-          
-      ```
-      $ git push --all origin
-      ```
-11. Now in github, create a pull request. When your pull request has been accepted, your changes will have been added to the main repository. 
+		- The -u option makes it so that the next times you push, you only need to run `$ git push`
+	  
+	3. Now in github, create a pull request on the branch you just pushed. 
+
+11. Once your pull request has been accepted and merged, you should switch to your master branch and fetch/merge from `upstream`.
+
+    ```
+    $ git checkout master
+    $ git fetch upstream
+    $ git merge upstream/master
+    ```
+
 
 ## Tips
-+ Do step 10 periodically to make sure your forked repository and working directory are up to date with the main repository
-+ When making small changes that you know you're going to keep, it's pretty unnecessary to work on a different branch
++ Don't forget to fetch/merge from `upstream` before you create a pull request.
