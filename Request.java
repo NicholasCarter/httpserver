@@ -1,8 +1,3 @@
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,6 +7,7 @@ import java.util.Map.Entry;
 class Request {
 	private String requestLine;
 	private HashMap< String, String > headers;
+	Log log = HttpServer.getLog();
 
 	public Request()
 	{
@@ -25,7 +21,9 @@ class Request {
 
 	public String getPath()
 	{
-		return requestLine.split( " " )[1];
+		String s = requestLine.split( " " )[1];
+
+		return s;
 	}
 
 	public String getVersion()
@@ -40,95 +38,42 @@ class Request {
 
 	public byte[] getResponse()
 	{
-		DateFormat format = new SimpleDateFormat( "E, dd MMM yyyy HH:mm:ss z" );
-		byte[] body = null;
-		byte[] hBytes = null;
-		byte[] rLBytes = null;
-		String headerLines = "";
-		String responseLine = "";
+		Response response = null;
+		DocRoot root = HttpServer.getDocroot();
 
-		headerLines += "Date: " + HttpServer.currentTime() + "\r\n";
 		if ( getOpcode().equals( "GET" ) )
 		{
-			if ( ( body = HttpServer.getDocroot().getFile( getPath() ) ) != null )
+			if ( getPath().contains( "../" ) )
 			{
-				try
-				{
-					// if the if mod since time is before the mod time 200 else
-					// 304
-					if ( headers.containsKey( "If-Modified-Since" )
-							&& format.parse(
-									( headers.get( "If-Modified-Since" ) ) )
-									.compareTo(
-											format.parse( HttpServer
-													.getDocroot().modTime(
-															getPath() ) ) ) >= 0 )
-					{
-						responseLine = "HTTP/1.1 304 Not Modified\r\n";
-						body = null;
-					}
-					else
-					{
+				response = new Response( 403, "403.html" );
 
-						responseLine = "HTTP/1.1 200 OK\r\n";
-						headerLines += "Last-Modified: "
-								+ HttpServer.getDocroot().modTime( getPath() )
-								+ "\r\n";
-						headerLines += "Content-Type: "
-								+ HttpServer.getDocroot().ContentType(
-										getPath() ) + "\r\n";
-						headerLines += "Content-Length: " + body.length
-								+ "\r\n";
-					}
-				} catch ( ParseException e )
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			}
+			else if ( !root.exists( getPath() ) )
+			{
+				response = new Response( 404, "404.html" );
+
 			}
 			else
 			{
-				responseLine = "HTTP/1.1 404 Not Found\r\n";
-				try
+				if ( !isModified() )
 				{
-					body = Files.readAllBytes( Paths.get( "404.html" ) );
-					headerLines += "Content-Type: text/html\r\n";
-					headerLines += "Content-Length: " + body.length + "\r\n";
-				} catch ( IOException e )
+					response = new Response( 304, null );
+				}
+				else
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					response = new Response( 200, getPath() );
+
 				}
 			}
 		}
 		else
 		{
-			responseLine = "HTTP/1.1 501 Not Implemented\r\n";
+			response = new Response( 501, null );
 		}
 
-		headerLines += "\r\n";
-		rLBytes = responseLine.getBytes();
-		hBytes = headerLines.getBytes();
+		log.println( "******RESPONSE******\n" + response.toString() );
 
-		HttpServer.getLog().println( "******RESPONSE******\n"
-				+ responseLine + headerLines );
-
-		byte[] out = null;
-		if ( body != null )
-		{
-			out = new byte[rLBytes.length + hBytes.length + body.length];
-			System.arraycopy( rLBytes, 0, out, 0, rLBytes.length );
-			System.arraycopy( hBytes, 0, out, rLBytes.length, hBytes.length );
-			System.arraycopy( body, 0, out, hBytes.length + rLBytes.length,
-					body.length );
-		}
-		else
-		{
-			out = new byte[rLBytes.length + hBytes.length];
-			System.arraycopy( rLBytes, 0, out, 0, rLBytes.length );
-			System.arraycopy( hBytes, 0, out, rLBytes.length, hBytes.length );
-		}
-		return out;
+		return response.toBytes();
 	}
 
 	public String getRequestLine()
@@ -151,4 +96,21 @@ class Request {
 		return s;
 	}
 
+	private boolean isModified()
+	{
+
+		DateFormat dateFormat = new SimpleDateFormat(
+				"E, dd MMM yyyy HH:mm:ss z" );
+		try
+		{
+			return ( headers.containsKey( "If-Modified-Since" ) && dateFormat
+					.parse( ( headers.get( "If-Modified-Since" ) ) ).compareTo(
+							dateFormat.parse( HttpServer.getDocroot().modTime(
+									getPath() ) ) ) < 0 );
+		} catch ( ParseException e )
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

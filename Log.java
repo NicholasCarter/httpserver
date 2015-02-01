@@ -8,15 +8,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class HttpLog {
+public class Log {
 	public Writer out;
 
-	public HttpLog()
+	public Log()
 	{
 		out = new PrintWriter( System.out, true );
 	}
 
-	public HttpLog( String filename ) throws FileNotFoundException
+	public Log( String filename ) throws FileNotFoundException
 	{
 		try
 		{
