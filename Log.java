@@ -1,12 +1,11 @@
 /*****************************************************************************
  * Log.java
  * 
- * Authors: Nicholas Carter 
+ * Authors: Nicholas Carter
  * 			Charles Fallert
- * 			Josh Hoiland 			
+ * 			Josh Hoiland
  *          Zack Smith
  *****************************************************************************/
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -16,38 +15,31 @@ public class Log {
 	private Writer out;
 
 	/*****************************************************************************
-	 * 
+	 * This constructor initializes the log. If filename is null or can't be
+	 * used System.out is used instead
 	 *****************************************************************************/
-	public Log()
-	{
-		out = new PrintWriter( System.out, true );
-	}
-
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
-	public Log( String filename ) throws FileNotFoundException
+	public Log( final String filename )
 	{
 		try
 		{
 			out = new FileWriter( filename );
-
-		} catch ( IOException e )
+		} catch ( IOException | NullPointerException e )
 		{
-			throw new FileNotFoundException( e.getMessage() );
+			out = new PrintWriter( System.out );
 		}
+
 	}
 
 	/*****************************************************************************
-	 * 
+	 * This method prints a string followed by a linefeed to the log
 	 *****************************************************************************/
-	public void println( String s )
+	public void println( final String s )
 	{
 		try
 		{
 			out.write( s + "\n" );
 			out.flush();
-		} catch ( IOException e )
+		} catch ( final IOException e )
 		{
 			System.out.println( "Couldn't write to log" );
 		}

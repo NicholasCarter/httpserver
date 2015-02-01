@@ -1,12 +1,13 @@
 /******************************************************************************
  * HttpServer.java
  * 
- * Authors: Nicholas Carter 
+ * Authors: Nicholas Carter
  * 			Charles Fallert
- * 			Josh Hoiland 			
+ * 			Josh Hoiland
  *          Zack Smith
  *****************************************************************************/
 import java.io.File;
+import java.io.IOException;
 import java.net.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,84 +15,102 @@ import java.util.Date;
 import java.util.TimeZone;
 
 class HttpServer {
-	private static DocRoot docroot;
+
+	public static final int TIMEOUT = 20000;
+	private static DocRoot docRoot;
 	private static Log log;
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
-	public HttpServer()
+	/**************************************************************************
+	 * This constructor opens a port and listens. When a connection is made, a
+	 * new thread is started to handle that connection
+	 *************************************************************************/
+	public HttpServer( final int port, final String docRoot,
+			final String logFile )
 	{
 		try
 		{
-			// bind to port 8080
 			@SuppressWarnings( "resource" )
-			ServerSocket listenSocket = new ServerSocket( 8080 );
+			final ServerSocket listenSocket = new ServerSocket( 8080 );
 
-			// log to file
-			// log = new HttpLog( "httplog.txt" );
-
-			// log to console
-			log = new Log();
-
-			// set docroot
-			docroot = new DocRoot( new File( "root" ) );
+			setLog( logFile );
+			setDocRoot( docRoot );
 
 			log.println( currentTime() );
-			log.println( "HTTP server running..." );
+			log.println( "HTTP server started." );
+			log.println( "" );
 
 			while ( true )
 			{
 				try
 				{
-					Socket socket = listenSocket.accept();
-					Runnable connectionHandler = new RequestHandler( socket );
-					Thread t = new Thread( connectionHandler );
+					final Socket socket = listenSocket.accept();
+					final Runnable connectionHandler = new RequestHandler(
+							socket );
+					final Thread t = new Thread( connectionHandler );
 					t.start();
 				}
 
-				catch ( Exception e )
+				catch ( final IOException e )
 				{
 					log.println( "failed to connect to client" );
 				}
 			}
-		} catch ( Exception e )
+		} catch ( final IOException e )
 		{
 			log.println( "Failed to bind to port 8080" );
 		}
 	}
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
-	public static synchronized DocRoot getDocroot()
+	/**************************************************************************
+	 * This method provides public synchronized access to the current time
+	 * formatted in the HTTP standard
+	 *************************************************************************/
+	public static synchronized String currentTime()
 	{
-		return docroot;
+		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
+		final DateFormat format = new SimpleDateFormat(
+				"E, dd MMM yyyy HH:mm:ss z" );
+		return format.format( new Date() );
 	}
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
+	/**************************************************************************
+	 * This method provides public synchronized acces to the Document Root
+	 *************************************************************************/
+	public static synchronized DocRoot getDocRoot()
+	{
+		return docRoot;
+	}
+
+	/**************************************************************************
+	 * This method allows static setting of the DocRoot field
+	 *************************************************************************/
+	private static void setDocRoot( final String dir )
+	{
+		docRoot = new DocRoot( new File( dir ) );
+
+	}
+
+	/**************************************************************************
+	 * This method provides public synchronized access to the Log
+	 *************************************************************************/
 	public static synchronized Log getLog()
 	{
 		return log;
 	}
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
-	public static synchronized String currentTime()
+	/**************************************************************************
+	 * This method allows static setting of the log field
+	 *************************************************************************/
+	private static void setLog( final String filename )
 	{
-		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
-		DateFormat format = new SimpleDateFormat( "E, dd MMM yyyy HH:mm:ss z" );
-		return format.format( new Date() );
+		log = new Log( filename );
 	}
 
-	/*****************************************************************************
+	/**************************************************************************
 	 * MAIN
-	 *****************************************************************************/
-	public static void main( String argv[] )
+	 *************************************************************************/
+	public static void main( final String argv[] )
 	{
-		new HttpServer();
+		new HttpServer( 8080, "D:\\Users\\Josh\\Desktop\\root", null );
 	}
 }

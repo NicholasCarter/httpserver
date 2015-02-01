@@ -1,9 +1,9 @@
 /*****************************************************************************
  * RequestHandler.java
  * 
- * Authors: Nicholas Carter 
+ * Authors: Nicholas Carter
  * 			Charles Fallert
- * 			Josh Hoiland 			
+ * 			Josh Hoiland
  *          Zack Smith
  *****************************************************************************/
 import java.io.BufferedReader;
@@ -13,36 +13,30 @@ import java.io.InputStreamReader;
 import java.net.*;
 
 class RequestHandler implements Runnable {
-	private int timeout = 20000;
-	private Socket socket;
-	private DataOutputStream out;
-	private BufferedReader in;
-	private Log log = HttpServer.getLog();
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
-	public RequestHandler( Socket socket )
+	private final Socket socket;
+	private final DataOutputStream out;
+	private final BufferedReader in;
+
+	/**************************************************************************
+	 * This constructor initializes I/O for new connections
+	 *************************************************************************/
+	public RequestHandler( final Socket socket ) throws IOException
 	{
 		this.socket = socket;
-		try
-		{
-			// Set timeout
-			this.socket.setSoTimeout( timeout );
-			// initialize I/O
-			out = new DataOutputStream( socket.getOutputStream() );
-			in = new BufferedReader( new InputStreamReader(
-					socket.getInputStream() ) );
+		// Set timeout
+		this.socket.setSoTimeout( HttpServer.TIMEOUT );
+		// initialize I/O
+		out = new DataOutputStream( socket.getOutputStream() );
+		in = new BufferedReader(
+				new InputStreamReader( socket.getInputStream() ) );
 
-		} catch ( IOException e )
-		{
-			// couldn't initialze Request handler
-		}
 	}
 
-	/*****************************************************************************
-	 * 
-	 *****************************************************************************/
+	/**************************************************************************
+	 * This method is invoked when the thread is started. It waits for requests,
+	 * then builds a request object and sends a response
+	 *************************************************************************/
 	public void run()
 	{
 		try
@@ -52,7 +46,7 @@ class RequestHandler implements Runnable {
 			while ( ( tmp = in.readLine() ) != null )
 			{
 				// Create request object, set requestLine
-				Request request = new Request();
+				final Request request = new Request();
 				request.setRequestLine( tmp );
 				try
 				{
@@ -64,11 +58,12 @@ class RequestHandler implements Runnable {
 								tmp.split( ": " )[1] );
 						tmp = in.readLine();
 					}
-				} catch ( Exception e )
+				} catch ( final IOException e )
 				{
-					// Couldn't read in headers
+					// --Ignore--
+					// Couldn't read headers
 				}
-				// If the request contains a body skip ip
+				// If the request contains a body skip it
 				if ( request.getHeaders().containsKey( "Content-Length" ) )
 				{
 					socket.getInputStream().skip(
@@ -81,19 +76,21 @@ class RequestHandler implements Runnable {
 				out.write( request.getResponse().toBytes() );
 			}
 			socket.close();
-		} catch ( SocketTimeoutException e )
+		} catch ( final SocketTimeoutException e )
 		{
-			log.println( "Socket Read Timeout" );
+			// Close socket on timeout
 			try
 			{
 				socket.close();
-			} catch ( IOException e1 )
+			} catch ( final IOException e1 )
 			{
-				log.println( "Couldn't close Socket after Read Timeout" );
+				// --Ignore--
+				// Couldn't close socket after read error.
 			}
-		} catch ( IOException e )
+		} catch ( final IOException e )
 		{
-			log.println( "Connection Close by client" );
+			// --Ignore--
+			// Connection Closed by client
 		}
 	}
 }

@@ -1,9 +1,9 @@
 /*****************************************************************************
  * Response.java
  * 
- * Authors: Nicholas Carter 
+ * Authors: Nicholas Carter
  * 			Charles Fallert
- * 			Josh Hoiland 			
+ * 			Josh Hoiland
  *          Zack Smith
  *****************************************************************************/
 import java.io.IOException;
@@ -12,16 +12,19 @@ import java.nio.file.Paths;
 
 public class Response {
 
-	DocRoot root = HttpServer.getDocroot();
-	private String path;
+	private final DocRoot root = HttpServer.getDocRoot();
+	private final String path;
+
 	private String headerLines = "";
 	private String responseLine = "";
 	private byte[] content;
 
 	/*****************************************************************************
-	 * 
+	 * This constructor calls for a certain response to be built based on the
+	 * code parameter.
 	 *****************************************************************************/
-	public Response( int code, String path ) throws SecurityException
+	public Response( final int code, final String path )
+			throws SecurityException
 	{
 		content = null;
 		headerLines += "Date: " + HttpServer.currentTime() + "\r\n";
@@ -60,24 +63,24 @@ public class Response {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Builds a 403 Forbidden Response
 	 *****************************************************************************/
 	private void build403()
 	{
-		responseLine = "HTTP/1.1 403 Not Found\r\n";
+		responseLine = "HTTP/1.1 403 Forbidden\r\n";
 		try
 		{
 			content = Files.readAllBytes( Paths.get( path ) );
 			headerLines += "Content-Type: text/html\r\n";
 			headerLines += "Content-Length: " + content.length + "\r\n";
-		} catch ( IOException e )
+		} catch ( final IOException e )
 		{
 			e.printStackTrace();
 		}
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Builds a 404 Not Found Response
 	 *****************************************************************************/
 	private void build404()
 	{
@@ -87,14 +90,14 @@ public class Response {
 			content = Files.readAllBytes( Paths.get( path ) );
 			headerLines += "Content-Type: text/html\r\n";
 			headerLines += "Content-Length: " + content.length + "\r\n";
-		} catch ( IOException e )
+		} catch ( final IOException e )
 		{
 			e.printStackTrace();
 		}
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Builds a 200 OK Response
 	 *****************************************************************************/
 	private void build200()
 	{
@@ -107,7 +110,7 @@ public class Response {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Builds a 304 Not Modified Response
 	 *****************************************************************************/
 	private void build304()
 	{
@@ -115,7 +118,7 @@ public class Response {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Builds a 501 Not Implemented Response
 	 *****************************************************************************/
 	private void build501()
 	{
@@ -123,13 +126,13 @@ public class Response {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Concatenates all response components into a single byte array
 	 *****************************************************************************/
 	public byte[] toBytes()
 	{
 		byte[] out = null;
-		byte[] rLBytes = responseLine.getBytes();
-		byte[] hBytes = headerLines.getBytes();
+		final byte[] rLBytes = responseLine.getBytes();
+		final byte[] hBytes = headerLines.getBytes();
 
 		if ( content != null )
 		{
@@ -150,7 +153,7 @@ public class Response {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * Returns a string representation of the responseline and headers
 	 *****************************************************************************/
 	public String toString()
 	{

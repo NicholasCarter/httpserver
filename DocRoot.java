@@ -23,20 +23,21 @@ class DocRoot {
 	private String path;
 
 	/*****************************************************************************
-	 * 
+	 * This constructor makes sure the supplied File is a directory and then
+	 * gets its absolute path
 	 *****************************************************************************/
-	public DocRoot( File docroot )
+	public DocRoot( File dir )
 	{
-		if ( !docroot.isDirectory() )
+		if ( !dir.isDirectory() )
 		{
 			throw new IllegalArgumentException( "Docroot must be a Directory!" );
 		}
-		root = docroot;
+		root = dir;
 		path = root.getAbsolutePath();
 	}
 
 	/*****************************************************************************
-	 * 
+	 * This method returns the specified file in a byte array
 	 *****************************************************************************/
 	public byte[] getFile( String f )
 	{
@@ -60,7 +61,8 @@ class DocRoot {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * This method checks if the specified file exists with in the doc root
+	 * directory
 	 *****************************************************************************/
 	public boolean exists( String f )
 	{
@@ -74,7 +76,8 @@ class DocRoot {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * This method returns the last modified time of the specified file in HTTP
+	 * format
 	 *****************************************************************************/
 	public String modTime( String f )
 	{
@@ -95,7 +98,9 @@ class DocRoot {
 	}
 
 	/*****************************************************************************
-	 * 
+	 * This method returns an HTTP content type for the specified file. It
+	 * currently supports: jpg, gif, png, html, css, mp3, pdf, ico, and plain
+	 * text. Unsupported types are treated as plain text
 	 *****************************************************************************/
 	public String contentType( String f )
 	{
@@ -116,6 +121,10 @@ class DocRoot {
 		else if ( ext.equals( "pdf" ) )
 		{
 			return "application/pdf";
+		}
+		else if ( ext.equals( "ico" ) )
+		{
+			return "image/x-icon";
 		}
 		else
 			return "text/plain";
