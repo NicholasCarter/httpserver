@@ -1,3 +1,11 @@
+/*****************************************************************************
+ * Request.java
+ * 
+ * Authors: Nicholas Carter 
+ * 			Charles Fallert
+ * 			Josh Hoiland 			
+ *          Zack Smith
+ *****************************************************************************/
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,11 +19,17 @@ class Request {
 
 	DocRoot root = HttpServer.getDocroot();
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public Request()
 	{
 		headers = new HashMap< String, String >();
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public Response getResponse()
 	{
 		Response response = null;
@@ -64,38 +78,43 @@ class Request {
 		return response;
 	}
 
-	public String getOpcode()
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
+	private String getOpcode()
 	{
 		return requestLine.split( " " )[0];
 	}
 
-	public String getPath()
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
+	private String getPath()
 	{
 		String s = requestLine.split( " " )[1];
 
 		return s;
 	}
 
-	public String getVersion()
-	{
-		return requestLine.split( " " )[2];
-	}
-
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public HashMap< String, String > getHeaders()
 	{
 		return headers;
 	}
 
-	public String getRequestLine()
-	{
-		return requestLine;
-	}
-
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public void setRequestLine( String requestLine )
 	{
 		this.requestLine = requestLine;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public String toString()
 	{
 		String s = requestLine + "\n";
@@ -106,6 +125,9 @@ class Request {
 		return s;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private boolean isModified()
 	{
 
