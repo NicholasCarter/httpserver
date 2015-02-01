@@ -2,23 +2,21 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.*;
-import java.util.ArrayList;
 
 class RequestHandler implements Runnable {
 	private int timeout = 20000;
 	private Socket socket;
 	private DataOutputStream out;
 	private BufferedReader in;
+	private Log log = HttpServer.getLog();
 
 	public RequestHandler( Socket socket )
 	{
 		this.socket = socket;
-
-		// Set timeout
 		try
 		{
+			// Set timeout
 			this.socket.setSoTimeout( timeout );
 			// initialize I/O
 			out = new DataOutputStream( socket.getOutputStream() );
@@ -27,13 +25,8 @@ class RequestHandler implements Runnable {
 
 		} catch ( IOException e )
 		{
-			e.printStackTrace();
+			// couldn't initialze Request handler
 		}
-	}
-
-	public String getInfo()
-	{
-		return socket.toString();
 	}
 
 	public void run()
@@ -41,13 +34,15 @@ class RequestHandler implements Runnable {
 		try
 		{
 			String tmp = "";
-
+			// Wait for a request
 			while ( ( tmp = in.readLine() ) != null )
 			{
+				// Create request object, set requestLine
 				Request request = new Request();
 				request.setRequestLine( tmp );
 				try
 				{
+					// Read and set headers
 					tmp = in.readLine();
 					while ( tmp != null && !tmp.equals( "" ) )
 					{
@@ -57,32 +52,34 @@ class RequestHandler implements Runnable {
 					}
 				} catch ( Exception e )
 				{
-					e.printStackTrace();
+					// Couldn't read in headers
 				}
+				// If the request contains a body skip ip
 				if ( request.getHeaders().containsKey( "Content-Length" ) )
 				{
 					socket.getInputStream().skip(
 							Long.parseLong( request.getHeaders().get(
 									"Content-Length" ) ) );
 				}
+				// log request
 				HttpServer.getLog().println( "***REQUEST*****\n" + request );
-				out.write( request.getResponse() );
+				// send response
+				out.write( request.getResponse().toBytes() );
 			}
 			socket.close();
 		} catch ( SocketTimeoutException e )
 		{
+			log.println( "Socket Read Timeout" );
 			try
 			{
 				socket.close();
 			} catch ( IOException e1 )
 			{
-				e1.printStackTrace();
+				log.println( "Couldn't close Socket after Read Timeout" );
 			}
-		} catch ( NumberFormatException e )
-		{
-			e.printStackTrace();
 		} catch ( IOException e )
 		{
+			log.println( "Connection Close by client" );
 		}
 	}
 }

@@ -26,6 +26,10 @@ class DocRoot {
 
 	public byte[] getFile( String f )
 	{
+		if ( f.contains( "../" ) )
+		{
+			throw new SecurityException( "Forbidden" );
+		}
 		byte[] data = null;
 		File file = new File( path + f );
 		if ( file.exists() )
@@ -43,6 +47,10 @@ class DocRoot {
 
 	public boolean exists( String f )
 	{
+		if ( f.contains( "../" ) )
+		{
+			throw new SecurityException( "Forbidden" );
+		}
 		if ( new File( path + f ).exists() )
 			return true;
 		return false;
@@ -50,6 +58,10 @@ class DocRoot {
 
 	public String modTime( String f )
 	{
+		if ( f.contains( "../" ) )
+		{
+			throw new SecurityException( "Forbidden" );
+		}
 		File file = new File( path + f );
 		long time = file.lastModified();
 		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );

@@ -1,12 +1,8 @@
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class Log {
 	public Writer out;
@@ -36,8 +32,7 @@ public class Log {
 			out.flush();
 		} catch ( IOException e )
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println( "Couldn't write to log" );
 		}
 
 	}

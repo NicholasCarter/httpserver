@@ -10,7 +10,7 @@ public class Response {
 	private String responseLine = "";
 	private byte[] content;
 
-	public Response( int code, String path )
+	public Response( int code, String path ) throws SecurityException
 	{
 		content = null;
 		headerLines += "Date: " + HttpServer.currentTime() + "\r\n";
