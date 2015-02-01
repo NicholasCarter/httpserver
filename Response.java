@@ -1,3 +1,11 @@
+/*****************************************************************************
+ * Response.java
+ * 
+ * Authors: Nicholas Carter 
+ * 			Charles Fallert
+ * 			Josh Hoiland 			
+ *          Zack Smith
+ *****************************************************************************/
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,6 +18,9 @@ public class Response {
 	private String responseLine = "";
 	private byte[] content;
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public Response( int code, String path ) throws SecurityException
 	{
 		content = null;
@@ -48,6 +59,9 @@ public class Response {
 		headerLines += "\r\n";
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private void build403()
 	{
 		responseLine = "HTTP/1.1 403 Not Found\r\n";
@@ -62,6 +76,9 @@ public class Response {
 		}
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private void build404()
 	{
 		responseLine = "HTTP/1.1 404 Not Found\r\n";
@@ -76,26 +93,38 @@ public class Response {
 		}
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private void build200()
 	{
 		responseLine = "HTTP/1.1 200 OK\r\n";
 		content = root.getFile( path );
 		headerLines += "Last-Modified: " + root.modTime( path ) + "\r\n";
-		headerLines += "Content-Type: " + root.ContentType( path ) + "\r\n";
+		headerLines += "Content-Type: " + root.contentType( path ) + "\r\n";
 		headerLines += "Content-Length: " + content.length + "\r\n";
 
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private void build304()
 	{
 		responseLine = "HTTP/1.1 304 Not Modified\r\n";
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	private void build501()
 	{
 		responseLine = "HTTP/1.1 501 Not Implemented\r\n";
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public byte[] toBytes()
 	{
 		byte[] out = null;
@@ -120,6 +149,9 @@ public class Response {
 		return out;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public String toString()
 	{
 		return responseLine + headerLines;

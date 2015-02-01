@@ -1,3 +1,11 @@
+/*****************************************************************************
+ * DocRoot.java
+ * 
+ * Authors: Nicholas Carter 
+ * 			Charles Fallert
+ * 			Josh Hoiland 			
+ *          Zack Smith
+ *****************************************************************************/
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,10 +18,13 @@ import java.util.TimeZone;
 class DocRoot {
 
 	// File representation of DocRoot
-	File root;
+	private File root;
 	// Absolute,Canonical path String of DocRoot
-	String path;
+	private String path;
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public DocRoot( File docroot )
 	{
 		if ( !docroot.isDirectory() )
@@ -24,6 +35,9 @@ class DocRoot {
 		path = root.getAbsolutePath();
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public byte[] getFile( String f )
 	{
 		if ( f.contains( "../" ) )
@@ -45,6 +59,9 @@ class DocRoot {
 		return data;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public boolean exists( String f )
 	{
 		if ( f.contains( "../" ) )
@@ -56,6 +73,9 @@ class DocRoot {
 		return false;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public String modTime( String f )
 	{
 		if ( f.contains( "../" ) )
@@ -74,7 +94,10 @@ class DocRoot {
 		return modifiedTime;
 	}
 
-	public String ContentType( String f )
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
+	public String contentType( String f )
 	{
 		int i = f.lastIndexOf( "." );
 		String ext = f.substring( i + 1 );

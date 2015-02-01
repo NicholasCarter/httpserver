@@ -1,9 +1,10 @@
 /******************************************************************************
  * HttpServer.java
  * 
- * Author: Josh Hoiland
- * 
- * 
+ * Authors: Nicholas Carter 
+ * 			Charles Fallert
+ * 			Josh Hoiland 			
+ *          Zack Smith
  *****************************************************************************/
 import java.io.File;
 import java.net.*;
@@ -16,6 +17,9 @@ class HttpServer {
 	private static DocRoot docroot;
 	private static Log log;
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public HttpServer()
 	{
 		try
@@ -57,16 +61,25 @@ class HttpServer {
 		}
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public static synchronized DocRoot getDocroot()
 	{
 		return docroot;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public static synchronized Log getLog()
 	{
 		return log;
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public static synchronized String currentTime()
 	{
 		TimeZone.setDefault( TimeZone.getTimeZone( "GMT" ) );
@@ -74,6 +87,9 @@ class HttpServer {
 		return format.format( new Date() );
 	}
 
+	/*****************************************************************************
+	 * MAIN
+	 *****************************************************************************/
 	public static void main( String argv[] )
 	{
 		new HttpServer();

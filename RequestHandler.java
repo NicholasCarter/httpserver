@@ -1,3 +1,11 @@
+/*****************************************************************************
+ * RequestHandler.java
+ * 
+ * Authors: Nicholas Carter 
+ * 			Charles Fallert
+ * 			Josh Hoiland 			
+ *          Zack Smith
+ *****************************************************************************/
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,6 +19,9 @@ class RequestHandler implements Runnable {
 	private BufferedReader in;
 	private Log log = HttpServer.getLog();
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public RequestHandler( Socket socket )
 	{
 		this.socket = socket;
@@ -29,6 +40,9 @@ class RequestHandler implements Runnable {
 		}
 	}
 
+	/*****************************************************************************
+	 * 
+	 *****************************************************************************/
 	public void run()
 	{
 		try
