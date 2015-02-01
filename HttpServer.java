@@ -111,6 +111,19 @@ class HttpServer {
 	 *************************************************************************/
 	public static void main( final String argv[] )
 	{
-		new HttpServer( 8080, "D:\\Users\\Josh\\Desktop\\root", null );
+		if ( argv.length == 3 )
+		{
+			new HttpServer( Integer.parseInt( argv[0] ), argv[1], argv[2] );
+		}
+		else if ( argv.length == 2 )
+		{
+			new HttpServer( Integer.parseInt( argv[0] ), argv[1], null );
+		}
+		else
+		{
+			System.out
+					.println( "Usage: \njava HttpServer <port> <Document Root> <Log File> \nor\njava HttpServer <port> <Document Root>" );
+		}
+
 	}
 }
