@@ -14,11 +14,9 @@ import java.util.Map.Entry;
 
 class Request {
 
-	private final Log log = HttpServer.getLog();
-	private final DocRoot root = HttpServer.getDocRoot();
-
 	private String requestLine;
 	private final HashMap< String, String > headers;
+	private byte[] content;
 
 	/*****************************************************************************
 	 * This constructor initializes the headers map
@@ -46,7 +44,7 @@ class Request {
 			try
 			{
 				// if the requested file doesn't exit in the docroot, 404
-				if ( !root.exists( getPath() ) )
+				if ( !HttpServer.getDocRoot().exists( getPath() ) )
 				{
 					response = new Response( 404, "404.html" );
 
@@ -76,11 +74,8 @@ class Request {
 		// Request was something other than GET, 501
 		else
 		{
-			response = new Response( 501, null );
+			response = new Response( 501, "501.html" );
 		}
-
-		log.println( "******RESPONSE******\n" + response.toString() );
-
 		return response;
 	}
 
@@ -121,6 +116,14 @@ class Request {
 	}
 
 	/*****************************************************************************
+	 * This method sets the requestLine field
+	 *****************************************************************************/
+	public void setContent( final byte[] content )
+	{
+		this.content = content;
+	}
+
+	/*****************************************************************************
 	 * This method returns a String representation of the entire request
 	 *****************************************************************************/
 	public String toString()
@@ -147,8 +150,8 @@ class Request {
 			{
 				final Date ifDate = dateFormat.parse( headers
 						.get( "If-Modified-Since" ) );
-				final Date actual = dateFormat
-						.parse( root.modTime( getPath() ) );
+				final Date actual = dateFormat.parse( HttpServer.getDocRoot()
+						.modTime( getPath() ) );
 				if ( actual.compareTo( ifDate ) <= 0 )
 					return false;
 			} catch ( final ParseException e )

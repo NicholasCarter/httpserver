@@ -63,17 +63,16 @@ class RequestHandler implements Runnable {
 					// --Ignore--
 					// Couldn't read headers
 				}
-				// If the request contains a body skip it
-				if ( request.getHeaders().containsKey( "Content-Length" ) )
-				{
-					socket.getInputStream().skip(
-							Long.parseLong( request.getHeaders().get(
-									"Content-Length" ) ) );
-				}
 				// log request
 				HttpServer.getLog().println( "***REQUEST*****\n" + request );
+
+				Response response = request.getResponse();
 				// send response
-				out.write( request.getResponse().toBytes() );
+				out.write( response.toBytes() );
+				HttpServer.getLog().println( "***Response*****\n" + response );
+				if ( response.code == 501 )
+					break;
+
 			}
 			socket.close();
 		} catch ( final SocketTimeoutException e )

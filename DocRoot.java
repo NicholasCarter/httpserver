@@ -51,6 +51,7 @@ class DocRoot {
 		{
 			try
 			{
+
 				data = Files.readAllBytes( Paths.get( file.getAbsolutePath() ) );
 			} catch ( IOException e )
 			{
