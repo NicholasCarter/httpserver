@@ -12,12 +12,12 @@ import java.nio.file.Paths;
 
 public class Response {
 
-	private final DocRoot root = HttpServer.getDocRoot();
 	private final String path;
 
 	private String headerLines = "";
 	private String responseLine = "";
 	private byte[] content;
+	public int code;
 
 	/*****************************************************************************
 	 * This constructor calls for a certain response to be built based on the
@@ -27,6 +27,7 @@ public class Response {
 			throws SecurityException
 	{
 		content = null;
+		this.code = code;
 		headerLines += "Date: " + HttpServer.currentTime() + "\r\n";
 		this.path = path;
 		switch ( code )
@@ -102,9 +103,11 @@ public class Response {
 	private void build200()
 	{
 		responseLine = "HTTP/1.1 200 OK\r\n";
-		content = root.getFile( path );
-		headerLines += "Last-Modified: " + root.modTime( path ) + "\r\n";
-		headerLines += "Content-Type: " + root.contentType( path ) + "\r\n";
+		content = HttpServer.getDocRoot().getFile( path );
+		headerLines += "Last-Modified: "
+				+ HttpServer.getDocRoot().modTime( path ) + "\r\n";
+		headerLines += "Content-Type: "
+				+ HttpServer.getDocRoot().contentType( path ) + "\r\n";
 		headerLines += "Content-Length: " + content.length + "\r\n";
 
 	}
@@ -123,6 +126,15 @@ public class Response {
 	private void build501()
 	{
 		responseLine = "HTTP/1.1 501 Not Implemented\r\n";
+		try
+		{
+			content = Files.readAllBytes( Paths.get( path ) );
+			headerLines += "Content-Type: text/html\r\n";
+			headerLines += "Content-Length: " + content.length + "\r\n";
+		} catch ( final IOException e )
+		{
+			e.printStackTrace();
+		}
 	}
 
 	/*****************************************************************************
