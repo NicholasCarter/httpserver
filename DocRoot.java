@@ -1,21 +1,20 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-class HttpDocroot {
+class DocRoot {
 
 	// File representation of DocRoot
 	File root;
 	// Absolute,Canonical path String of DocRoot
 	String path;
 
-	public HttpDocroot( File docroot )
+	public DocRoot( File docroot )
 	{
 		if ( !docroot.isDirectory() )
 		{
@@ -40,6 +39,13 @@ class HttpDocroot {
 			}
 		}
 		return data;
+	}
+
+	public boolean exists( String f )
+	{
+		if ( new File( path + f ).exists() )
+			return true;
+		return false;
 	}
 
 	public String modTime( String f )

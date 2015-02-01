@@ -13,8 +13,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 class HttpServer {
-	private static HttpDocroot docroot;
-	private static HttpLog log;
+	private static DocRoot docroot;
+	private static Log log;
 
 	public HttpServer()
 	{
@@ -22,8 +22,8 @@ class HttpServer {
 		{
 			ServerSocket listenSocket = new ServerSocket( 9876 );
 			// log = new HttpLog( "httplog.txt" );
-			log = new HttpLog();
-			docroot = new HttpDocroot( new File( "root" ) );
+			log = new Log();
+			docroot = new DocRoot( new File( "root" ) );
 			System.out.println( "HTTP server running..." );
 			System.out.println( currentTime() );
 
@@ -49,12 +49,12 @@ class HttpServer {
 		}
 	}
 
-	public static synchronized HttpDocroot getDocroot()
+	public static synchronized DocRoot getDocroot()
 	{
 		return docroot;
 	}
 
-	public static synchronized HttpLog getLog()
+	public static synchronized Log getLog()
 	{
 		return log;
 	}
