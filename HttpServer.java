@@ -20,12 +20,21 @@ class HttpServer {
 	{
 		try
 		{
-			ServerSocket listenSocket = new ServerSocket( 9876 );
+			// bind to port 8080
+			@SuppressWarnings( "resource" )
+			ServerSocket listenSocket = new ServerSocket( 8080 );
+
+			// log to file
 			// log = new HttpLog( "httplog.txt" );
+
+			// log to console
 			log = new Log();
+
+			// set docroot
 			docroot = new DocRoot( new File( "root" ) );
-			System.out.println( "HTTP server running..." );
-			System.out.println( currentTime() );
+
+			log.println( currentTime() );
+			log.println( "HTTP server running..." );
 
 			while ( true )
 			{
@@ -35,17 +44,16 @@ class HttpServer {
 					Runnable connectionHandler = new RequestHandler( socket );
 					Thread t = new Thread( connectionHandler );
 					t.start();
-
 				}
 
 				catch ( Exception e )
 				{
-					e.printStackTrace();
+					log.println( "failed to connect to client" );
 				}
 			}
 		} catch ( Exception e )
 		{
-			e.printStackTrace();
+			log.println( "Failed to bind to port 8080" );
 		}
 	}
 

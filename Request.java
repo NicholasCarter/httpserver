@@ -9,9 +9,59 @@ class Request {
 	private HashMap< String, String > headers;
 	Log log = HttpServer.getLog();
 
+	DocRoot root = HttpServer.getDocroot();
+
 	public Request()
 	{
 		headers = new HashMap< String, String >();
+	}
+
+	public Response getResponse()
+	{
+		Response response = null;
+
+		// If request was GET....
+		if ( getOpcode().equals( "GET" ) )
+		{
+			try
+			{
+				// if the requested file doesn't exit in the docroot, 404
+				if ( !root.exists( getPath() ) )
+				{
+					response = new Response( 404, "404.html" );
+
+				}
+				// If the request is for a valid file...
+				else
+				{
+					// ...and hasn't been modified, 304
+					if ( !isModified() )
+					{
+						response = new Response( 304, null );
+					}
+					// ...but has been modified, 200
+					else
+					{
+						response = new Response( 200, getPath() );
+
+					}
+				}
+			} catch ( SecurityException e )
+			{
+				// Tried to access a forbidden file
+				response = new Response( 403, "403.html" );
+			}
+
+		}
+		// Request was something other than GET, 501
+		else
+		{
+			response = new Response( 501, null );
+		}
+
+		log.println( "******RESPONSE******\n" + response.toString() );
+
+		return response;
 	}
 
 	public String getOpcode()
@@ -34,46 +84,6 @@ class Request {
 	public HashMap< String, String > getHeaders()
 	{
 		return headers;
-	}
-
-	public byte[] getResponse()
-	{
-		Response response = null;
-		DocRoot root = HttpServer.getDocroot();
-
-		if ( getOpcode().equals( "GET" ) )
-		{
-			if ( getPath().contains( "../" ) )
-			{
-				response = new Response( 403, "403.html" );
-
-			}
-			else if ( !root.exists( getPath() ) )
-			{
-				response = new Response( 404, "404.html" );
-
-			}
-			else
-			{
-				if ( !isModified() )
-				{
-					response = new Response( 304, null );
-				}
-				else
-				{
-					response = new Response( 200, getPath() );
-
-				}
-			}
-		}
-		else
-		{
-			response = new Response( 501, null );
-		}
-
-		log.println( "******RESPONSE******\n" + response.toString() );
-
-		return response.toBytes();
 	}
 
 	public String getRequestLine()
@@ -101,16 +111,21 @@ class Request {
 
 		DateFormat dateFormat = new SimpleDateFormat(
 				"E, dd MMM yyyy HH:mm:ss z" );
-		try
+		if ( headers.containsKey( "If-Modified-Since" ) )
 		{
-			return ( headers.containsKey( "If-Modified-Since" ) && dateFormat
-					.parse( ( headers.get( "If-Modified-Since" ) ) ).compareTo(
-							dateFormat.parse( HttpServer.getDocroot().modTime(
-									getPath() ) ) ) < 0 );
-		} catch ( ParseException e )
-		{
-			e.printStackTrace();
+			try
+			{
+				Date ifDate = dateFormat.parse( headers
+						.get( "If-Modified-Since" ) );
+				Date actual = dateFormat.parse( root.modTime( getPath() ) );
+				if ( actual.compareTo( ifDate ) > 0 )
+					return true;
+			} catch ( ParseException e )
+			{
+				e.printStackTrace();
+			}
 		}
 		return false;
+
 	}
 }
