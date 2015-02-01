@@ -5,6 +5,11 @@
 + [How to Contribute](#how-to-contribute)
 + [Tips](#tips)
 
+Class Diagram
+----------
+![Image of Yaktocat](HttpServerUML.png)
+
+
 Sample HTTP Exchange
 -----------------------
 
