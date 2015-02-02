@@ -39,6 +39,8 @@ class RequestHandler implements Runnable {
 	 *************************************************************************/
 	public void run()
 	{
+		HttpServer.getLog().println( "CONNECT: " + socket );
+		HttpServer.getLog().println( "" );
 		try
 		{
 			String tmp = "";
@@ -64,25 +66,37 @@ class RequestHandler implements Runnable {
 					// Couldn't read headers
 				}
 				// log request
-				HttpServer.getLog().println( "***REQUEST*****\n" + request );
+				HttpServer.getLog().println(
+						"REQUEST: " + socket + "\n" + request );
 
-				Response response = request.getResponse();
+				final Response response = request.getResponse();
 
 				HttpServer.getLog().println(
-						"***Response*****\n" + response.toString() );
+						"RESPONSE: " + socket + "\n" + response );
+
 				// send response
-				out.write( response.toBytes() );
-				
+				final byte[] responsebytes = response.toBytes();
+				for ( int i = 0; i < responsebytes.length; ++i )
+				{
+					out.writeByte( responsebytes[i] );
+				}
+				// If Connection: close or 501, close the connection
 				if ( response.code == 501
 						|| ( request.getHeaders().containsKey( "Connection" ) && request
 								.getHeaders().get( "Connection" )
 								.equals( "close" ) ) )
+				{
 					break;
+				}
 
 			}
+			HttpServer.getLog().println( "DISCONNECT: " + socket );
+			HttpServer.getLog().println( "" );
 			socket.close();
 		} catch ( final SocketTimeoutException e )
 		{
+			HttpServer.getLog().println( "TIMEOUT: " + socket );
+			HttpServer.getLog().println( "" );
 			// Close socket on timeout
 			try
 			{
@@ -94,8 +108,8 @@ class RequestHandler implements Runnable {
 			}
 		} catch ( final IOException e )
 		{
-			// --Ignore--
-			// Connection Closed by client
+			HttpServer.getLog().println( "CONNECTION LOST: " + socket );
+			HttpServer.getLog().println( "" );
 		}
 	}
 }

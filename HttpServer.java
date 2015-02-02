@@ -34,9 +34,10 @@ class HttpServer {
 
 			setLog( logFile );
 			setDocRoot( docRoot );
-
+			log.println( "**********************************************************************" );
 			log.println( currentTime() );
 			log.println( "HTTP server started." );
+			log.println( "**********************************************************************" );
 			log.println( "" );
 
 			while ( true )
@@ -57,7 +58,7 @@ class HttpServer {
 			}
 		} catch ( final IOException e )
 		{
-			log.println( "Failed to bind to port 8080" );
+			System.out.println( "Failed to bind to port 8080" );
 		}
 	}
 
