@@ -107,9 +107,13 @@ class DocRoot {
 	{
 		int i = f.lastIndexOf( "." );
 		String ext = f.substring( i + 1 );
-		if ( ext.equals( "jpg" ) || ext.equals( "gif" ) || ext.equals( "png" ) )
+		if ( ext.equals( "jpeg" ) || ext.equals( "gif" ) || ext.equals( "png" ) )
 		{
 			return "image/" + ext;
+		}
+		else if ( ext.equals( "jpg" ) )
+		{
+			return "image/jpeg";
 		}
 		else if ( ext.equals( "html" ) || ext.equals( "css" ) )
 		{

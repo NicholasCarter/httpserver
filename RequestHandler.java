@@ -67,10 +67,16 @@ class RequestHandler implements Runnable {
 				HttpServer.getLog().println( "***REQUEST*****\n" + request );
 
 				Response response = request.getResponse();
+
+				HttpServer.getLog().println(
+						"***Response*****\n" + response.toString() );
 				// send response
 				out.write( response.toBytes() );
-				HttpServer.getLog().println( "***Response*****\n" + response );
-				if ( response.code == 501 )
+				
+				if ( response.code == 501
+						|| ( request.getHeaders().containsKey( "Connection" ) && request
+								.getHeaders().get( "Connection" )
+								.equals( "close" ) ) )
 					break;
 
 			}

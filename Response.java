@@ -109,7 +109,6 @@ public class Response {
 		headerLines += "Content-Type: "
 				+ HttpServer.getDocRoot().contentType( path ) + "\r\n";
 		headerLines += "Content-Length: " + content.length + "\r\n";
-
 	}
 
 	/*****************************************************************************
@@ -160,7 +159,6 @@ public class Response {
 			System.arraycopy( rLBytes, 0, out, 0, rLBytes.length );
 			System.arraycopy( hBytes, 0, out, rLBytes.length, hBytes.length );
 		}
-
 		return out;
 	}
 
