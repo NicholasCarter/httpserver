@@ -56,8 +56,8 @@ class RequestHandler implements Runnable {
 					tmp = in.readLine();
 					while ( tmp != null && !tmp.equals( "" ) )
 					{
-						request.getHeaders().put( tmp.split( ": " )[0],
-								tmp.split( ": " )[1] );
+						request.getHeaders().put( tmp.split( ": ",2 )[0],
+								tmp.split( ": ",2 )[1] );
 						tmp = in.readLine();
 					}
 				} catch ( final IOException e )
