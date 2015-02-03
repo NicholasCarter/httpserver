@@ -12,6 +12,7 @@ import java.net.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.MissingResourceException;
 import java.util.TimeZone;
 
 class HttpServer {
@@ -29,11 +30,18 @@ class HttpServer {
 	{
 		try
 		{
+			setLog( logFile );
+			setDocRoot( docRoot );
+			String[] errorPages = { "404.html", "403.html", "501.html" };
+			for ( int i = 0; i < errorPages.length; ++i )
+			{
+				if ( !new File( errorPages[i] ).exists() )
+					throw new MissingResourceException( "Missing error pages",
+							null, null );
+			}
 			@SuppressWarnings( "resource" )
 			final ServerSocket listenSocket = new ServerSocket( 8080 );
 
-			setLog( logFile );
-			setDocRoot( docRoot );
 			log.println( "**********************************************************************" );
 			log.println( currentTime() );
 			log.println( "HTTP server started." );
@@ -59,6 +67,9 @@ class HttpServer {
 		} catch ( final IOException e )
 		{
 			System.out.println( "Failed to bind to port 8080" );
+		} catch ( final MissingResourceException e )
+		{
+			System.out.println( e.getMessage() );
 		}
 	}
 
