@@ -99,39 +99,17 @@ class DocRoot {
 	}
 
 	/*****************************************************************************
-	 * This method returns an HTTP content type for the specified file. It
-	 * currently supports: jpg, gif, png, html, css, mp3, pdf, ico, and plain
-	 * text. Unsupported types are treated as plain text
+	 * This method returns an MIME type for the specified file. Defaults to
+	 * plain text
 	 *****************************************************************************/
 	public String contentType( String f )
 	{
-		int i = f.lastIndexOf( "." );
-		String ext = f.substring( i + 1 );
-		if ( ext.equals( "jpeg" ) || ext.equals( "gif" ) || ext.equals( "png" ) )
+		try
 		{
-			return "image/" + ext;
-		}
-		else if ( ext.equals( "jpg" ) )
+			return Files.probeContentType( Paths.get( path + f ) );
+		} catch ( IOException e )
 		{
-			return "image/jpeg";
-		}
-		else if ( ext.equals( "html" ) || ext.equals( "css" ) )
-		{
-			return "text/" + ext;
-		}
-		else if ( ext.equals( "mp3" ) )
-		{
-			return "audio/" + "mpeg";
-		}
-		else if ( ext.equals( "pdf" ) )
-		{
-			return "application/pdf";
-		}
-		else if ( ext.equals( "ico" ) )
-		{
-			return "image/x-icon";
-		}
-		else
 			return "text/plain";
+		}
 	}
 }
