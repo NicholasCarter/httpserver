@@ -45,7 +45,7 @@ class RequestHandler implements Runnable {
 		{
 			String tmp = "";
 			// Wait for a request
-			while ( ( tmp = in.readLine() ) != null )
+			while ( ( tmp = in.readLine() ) != null && !tmp.equals( "" ))
 			{
 				// Create request object, set requestLine
 				final Request request = new Request();
@@ -56,8 +56,15 @@ class RequestHandler implements Runnable {
 					tmp = in.readLine();
 					while ( tmp != null && !tmp.equals( "" ) )
 					{
-						request.getHeaders().put( tmp.split( ": ",2 )[0],
-								tmp.split( ": ",2 )[1] );
+						String[] header = tmp.split( ": ", 2 );
+						if ( header.length == 2 )
+						{
+							request.getHeaders().put( tmp.split( ": ", 2 )[0],
+									tmp.split( ": ", 2 )[1] );
+						}
+						else
+							request.getHeaders().put( tmp.split( ": ", 2 )[0],
+									"" );
 						tmp = in.readLine();
 					}
 				} catch ( final IOException e )
